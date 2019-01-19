@@ -1,0 +1,47 @@
+plugins {
+  id 'java'
+}
+
+group 'com.example'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+wrapper {
+  version = "5.1.1"
+}
+
+configurations {
+  domaGenRuntime
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  domaGenRuntime 'org.seasar.doma:doma-gen:2.21.0'
+  domaGenRuntime 'mysql:mysql-connector-java:8.0.13'
+}
+
+task gen {
+  group = "doma-gen"
+  doLast {
+    ant.taskdef(
+      resource: 'domagentask.properties',
+      classpath: configurations.domaGenRuntime.asPath)
+    // Ú‘±æ‚É‚æ‚è“K‹X•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
+    ant.gen(
+      url: 'jdbc:mysql://127.0.0.1:3306',
+      user: '',
+      password: '') {
+      entityConfig(
+        packageName: 'com.example.entity'
+      )
+      daoConfig(
+        packageName: 'com.example.dao'
+      )
+      sqlConfig()
+    }
+  }
+}
